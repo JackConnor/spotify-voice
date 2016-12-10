@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "My First Extendy",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html",
+    "default_title": "Whats up mother fucker"
+  },
+  "permissions": [
+    "http://*/*",
+    "https://*/*",
+    "https://ajax.googleapis.com/",
+    "storage",
+  	"activeTab",
+  	"tabs",
+  	"https://www.youtube.com/*",
+  	"contextMenus"
+  ]
+}
