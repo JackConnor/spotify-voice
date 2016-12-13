@@ -53,6 +53,11 @@ function startRec() {
     }
   }
 
+  speech.onaudioend = function() {
+    console.log('ended');
+    startRec();
+  }
+
   speech.onresult = function(data) {
     var wordsArr = data.results[data.results.length-1][0].transcript.split(' ');
     for (var i = 0; i < wordsArr.length; i++) {
