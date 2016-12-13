@@ -1,17 +1,43 @@
-// console.log('where am iiiiiiiii')
-//
-// console.log(window.location);
-// console.log(chrome);
-// console.log(chrome.tabs);
-//
-//
+var MAIN_URL = 'https://www.youtube.com/*';
+
 function nextSong(){
-  var MAIN_URL = 'https://www.youtube.com/*';
+  var runtimer = chrome.runtime
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
-      code: 'var a= document.getElementsByClassName("ytp-next-button ytp-button")[0]; console.log(a); console.log("heyyaaa"); a.click();'
+      code: 'var a= document.getElementsByClassName("ytp-next-button ytp-button")[0]; console.log("next song"); a.click();'
     }, function() {
-      console.log('changed that fucker');
+      startRec();
+    });
+  });
+}
+
+
+function lastSong(){
+  chrome.tabs.query({url: MAIN_URL}, function(data) {
+    chrome.tabs.executeScript(data[0].id, {
+      code: 'var a= document.getElementsByClassName("ytp-prev-button ytp-button")[0]; console.log(a); console.log("last song"); a.click();'
+    }, function() {
+      startRec();
+    });
+  });
+}
+
+function pauseSong(){
+  chrome.tabs.query({url: MAIN_URL}, function(data) {
+    chrome.tabs.executeScript(data[0].id, {
+      code: 'var a = document.getElementsByClassName("html5-video-player")[0]; if(a.classList.contains("playing-mode")){var b = document.getElementsByClassName("ytp-play-button ytp-button")[0]; b.click()} else{console.log("already paused")};'
+    }, function() {
+      startRec();
+    });
+  });
+}
+
+function playSong(){
+  chrome.tabs.query({url: MAIN_URL}, function(data) {
+    chrome.tabs.executeScript(data[0].id, {
+      code: 'var a = document.getElementsByClassName("html5-video-player")[0]; if(a.classList.contains("paused-mode")){var b = document.getElementsByClassName("ytp-play-button ytp-button")[0]; b.click()} else{console.log("already playing")};'
+    }, function() {
+      startRec();
     });
   });
 }
@@ -20,50 +46,32 @@ function startRec() {
   var speech = new webkitSpeechRecognition();
   speech.continuous = true;
   speech.interimResults = true;
+  // ////////if user is not authorized, this opens up a new tab which asks them to use their mic
   speech.onerror = function(err) {
-    console.log('er  red');
-    console.log(err);
     if (err.error === 'not-allowed') {
       chrome.tabs.create({url: "auth.html"})
     }
   }
+
   speech.onresult = function(data) {
-    console.log('resulted');
-    console.log(data.results[0][0].transcript);
     var wordsArr = data.results[data.results.length-1][0].transcript.split(' ');
     for (var i = 0; i < wordsArr.length; i++) {
-      if (wordsArr[i] === 'next') {
+      if (wordsArr[i] === 'next' || wordsArr[i] === 'necks' || wordsArr[i] === 'neck') {
         nextSong();
+      }
+      else if (wordsArr[i] === 'last' || wordsArr[i] === 'previous') {
+        lastSong();
+      }
+      else if(wordsArr[i] === 'stop' ||wordsArr[i] === 'pause' || wordsArr[i] === 'paws') {
+        pauseSong();
+      }
+      else if(wordsArr[i] === 'go' ||wordsArr[i] === 'played' || wordsArr[i] === 'play' || wordsArr[i] === 'plays') {
+        playSong();
       }
     }
   }
-  console.log(speech);
   speech.start();
 }
-// }
-setTimeout(function() {
-  console.log('beginning');
+chrome.tabs.onActivated.addListener(function(tab) {
   startRec();
-}, 2000);
-
-// window.navigator.mediaDevices.getUserMedia({audio: true})
-// .then(function(stream) {
-//   var ctx = new AudioContext();
-//   var analyzer = ctx.createAnalyser();
-//   console.log(analyzer);
-//   var streamSource = ctx.createMediaStreamSource(stream);
-//   streamSource.connect(analyzer);
-//   console.log(analyzer);
-//   // console.log(stream);
-//   // var ctx = new AudioContext();
-//   // console.log(ctx);
-//   // var streamCtx = ctx.createMediaStreamSource(stream);
-//   // console.log(streamCtx);
-//   // streamCtx.connect(ctx.destination);
-//   // stream.onactive = function(){
-//   //   console.log('active');
-//   // }
-// })
-// .catch(function(err) {
-//   console.log(err);
-// });
+})

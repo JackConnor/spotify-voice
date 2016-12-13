@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "My First Extendy",
+  "name": "Youtube Voice",
   "version": "1.0",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html",
-    "default_title": "Whats up mother fucker"
+    "default_title": "Youtube Voice"
   },
   "permissions": [
     "http://*/*",
@@ -16,5 +16,8 @@
   	"tabs",
   	"https://www.youtube.com/*",
   	"contextMenus"
-  ]
+  ],
+  "background": {
+    "scripts": ["popup.js"]
+  }
 }
