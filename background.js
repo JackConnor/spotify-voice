@@ -1,12 +1,12 @@
 var MAIN_URL = 'https://www.youtube.com/*';
-
+var bBlock = true;
 function nextSong(){
   var runtimer = chrome.runtime
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
       code: 'var a= document.getElementsByClassName("ytp-next-button ytp-button")[0]; console.log("next song"); a.click();'
     }, function() {
-      startRec();
+      // startRec();
     });
   });
 }
@@ -17,7 +17,7 @@ function lastSong(){
     chrome.tabs.executeScript(data[0].id, {
       code: 'var a= document.getElementsByClassName("ytp-prev-button ytp-button")[0]; console.log(a); console.log("last song"); a.click();'
     }, function() {
-      startRec();
+      // startRec();
     });
   });
 }
@@ -27,7 +27,7 @@ function pauseSong(){
     chrome.tabs.executeScript(data[0].id, {
       code: 'var a = document.getElementsByClassName("html5-video-player")[0]; if(a.classList.contains("playing-mode")){var b = document.getElementsByClassName("ytp-play-button ytp-button")[0]; b.click()} else{console.log("already paused")};'
     }, function() {
-      startRec();
+      // startRec();
     });
   });
 }
@@ -37,7 +37,7 @@ function playSong(){
     chrome.tabs.executeScript(data[0].id, {
       code: 'var a = document.getElementsByClassName("html5-video-player")[0]; if(a.classList.contains("paused-mode")){var b = document.getElementsByClassName("ytp-play-button ytp-button")[0]; b.click()} else{console.log("already playing")};'
     }, function() {
-      startRec();
+      // startRec();
     });
   });
 }
@@ -53,13 +53,17 @@ function startRec() {
     }
   }
 
-  speech.onaudioend = function() {
-    console.log('ended');
+  // speech.onaudioend = function() {
+  //   //startRec();
+  // }
+  //
+  speech.onend = function() {
     startRec();
   }
 
   speech.onresult = function(data) {
     var wordsArr = data.results[data.results.length-1][0].transcript.split(' ');
+    // alert(wordsArr);
     for (var i = 0; i < wordsArr.length; i++) {
       if (wordsArr[i] === 'next' || wordsArr[i] === 'necks' || wordsArr[i] === 'neck') {
         nextSong();
@@ -80,3 +84,6 @@ function startRec() {
 chrome.tabs.onActivated.addListener(function(tab) {
   startRec();
 })
+
+/////begin function
+startRec();

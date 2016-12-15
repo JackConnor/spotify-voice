@@ -18,6 +18,7 @@
   	"contextMenus"
   ],
   "background": {
-    "scripts": ["popup.js"]
+    "scripts": ["background.js"],
+    "persistent": true
   }
 }
