@@ -11,8 +11,8 @@
 <h4>
   step 1:
     Clone repo into any folder
-    <img src='clone.png'></img>
 </h4>
+<img src='clone.png'></img>
 <br>
 <h4>
   step 2:
