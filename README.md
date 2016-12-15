@@ -1,11 +1,9 @@
 <h2>
   So you want to control youtube by voice, huh?
   </h2>
-<br>
 <h4>
-  Well You've come to the right place. This is a simple Youtube chrome extension to control youtube with voice controls only. You'll find some documentation here, plus links below Send me a note if you have any questions (or post an issue).
+  Well You've come to the right place. This is a simple Youtube chrome extension to control youtube with voice controls only. You'll find some documentation here, but please send me a note if you have any questions (or post an issue).
 </h4>
-<br>
 <h4>
   Chrome extensions are very lightweight, so all you need to do is clone this repo anywhere you might want, and just follow the easy steps below (with pictures!).
 </h4>
@@ -13,6 +11,7 @@
 <h4>
   step 1:
     Clone repo into any folder
+    <img src='clone.png'></img>
 </h4>
 <br>
 <h4>
