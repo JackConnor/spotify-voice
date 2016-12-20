@@ -7,9 +7,6 @@
 <html>
   <head>
     <title>Getting Started Extension's Popup</title>
-    <style>
-
-    </style>
     <!--
       - JavaScript and HTML must be in separate files: see our Content Security
       - Policy documentation[1] for details and explanation.
@@ -18,9 +15,20 @@
      -->
     <script src="background.js"></script>
   </head>
-  <body>
-    <div id="status"></div>
-    <img id="image-result" hidden>
-    Youtube Voice
+  <style media="screen">
+    .ext-body {
+      min-width: 105px;
+    }
+    .ext-headline {
+      font-size: 16px;
+      color: grey;
+      text-align: center;
+    }
+  </style>
+  <body style=''>
+    <div class="ext-body">
+      <div id="status"></div>
+      <div class='ext-headline'>Youtube Voice</div>
+    </div>
   </body>
 </html>
