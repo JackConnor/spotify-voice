@@ -1,11 +1,12 @@
-var MAIN_URL = 'https://www.youtube.com/*';
+var MAIN_URL = 'https://play.spotify.com/*';
 var bBlock = true;
 var bInProgress = false;
 function nextSong(){
   var runtimer = chrome.runtime
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
-      code: 'var a= document.getElementsByClassName("ytp-next-button ytp-button")[0]; console.log("next song"); a.click();'
+      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#next');"+ "console.log(nxt); "+
+      "nxt.click();"
     }, function() {
       //
     });
@@ -16,7 +17,28 @@ function nextSong(){
 function lastSong(){
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
-      code: 'var a= document.getElementsByClassName("ytp-prev-button ytp-button")[0]; console.log(a); console.log("last song"); a.click(); setTimeout(function(){a.click(); console.log("reclicked baby")}, 100)'
+      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#previous');"+ "console.log(nxt); "+
+      "nxt.click(); console.log('first');"+
+      "var timeDist = document.getElementById('app-player').contentDocument.querySelector('#time-marker-arrow');"+
+      "console.log(timeDist);"+
+      "var a = timeDist.style.left;"+
+      "if (a == '7px' || a == '8px' || a == '9px') {"+
+      "console.log('before 3')}"+
+      "else { console.log('after');"+
+      "setTimeout(function(){nxt.click(); console.log('second')"+
+      "}, 500)}"
+      // "setTimeout(function(){nxt.click(); console.log('second')}, 400)"
+    }, function() {
+      //
+    });
+  });
+}
+
+function restartSong(){
+  chrome.tabs.query({url: MAIN_URL}, function(data) {
+    chrome.tabs.executeScript(data[0].id, {
+      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#previous');"+ "console.log(nxt); "+
+      "nxt.click();"
     }, function() {
       //
     });
@@ -26,7 +48,8 @@ function lastSong(){
 function pauseSong(){
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
-      code: 'var a = document.getElementsByClassName("html5-video-player")[0]; if(a.classList.contains("playing-mode")){var b = document.getElementsByClassName("ytp-play-button ytp-button")[0]; b.click()} else{console.log("already paused")};'
+      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#play-pause');"+ "console.log(nxt); "+
+      "nxt.click();"
     }, function() {
       //
     });
@@ -36,7 +59,8 @@ function pauseSong(){
 function playSong(){
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
-      code: 'var a = document.getElementsByClassName("html5-video-player")[0]; if(a.classList.contains("paused-mode")){var b = document.getElementsByClassName("ytp-play-button ytp-button")[0]; b.click()} else{console.log("already playing")};'
+      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#play-pause');"+ "console.log(nxt); "+
+      "nxt.click();"
     }, function() {
       //
     });
@@ -63,29 +87,42 @@ function startRec() {
     if (!bInProgress) {
       for (var i = 0; i < wordsArr.length; i++) {
         if (wordsArr[i] === 'next' || wordsArr[i] === 'necks' || wordsArr[i] === 'neck') {
-          flashCommand('Next Song');
+          flashCommand('Next', 'next.png');
           bInProgress = true;
           nextSong();
-          if (document.getElementsByClassName('ext-headline')[0].innerText === 'paused song') {
+          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
             playSong();
           }
         }
-        else if (wordsArr[i] === 'last' || wordsArr[i] === 'previous') {
-          flashCommand('Last Song');
+        else if (wordsArr[i] === 'last' || wordsArr[i] === 'lass' || wordsArr[i] === 'las' || wordsArr[i] === 'previous') {
+          flashCommand('Last', 'last.png');
           bInProgress = true;
           lastSong();
-          if (document.getElementsByClassName('ext-headline')[0].innerText === 'paused song') {
+          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
+            playSong();
+          }
+        }
+        else if (wordsArr[i] === 'restart' || wordsArr[i] === 'startover' || wordsArr[i] === 'redo' || wordsArr[i] === 'again') {
+          flashCommand('Restart', 'last.png');
+          bInProgress = true;
+          restartSong();
+          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
             playSong();
           }
         }
         else if(wordsArr[i] === 'stop' ||wordsArr[i] === 'pause' || wordsArr[i] === 'paws') {
-          document.getElementsByClassName('ext-headline')[0].innerText = 'Paused Song';
-          pauseSong();
+          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Spotify Voice') {
+            document.getElementsByClassName('ext-headline')[0].innerText = 'Pause';
+            document.getElementById('icon-photo').src = 'pause.png';
+            pauseSong();
+          }
         }
         else if(wordsArr[i] === 'go' || wordsArr[i] === 'goal' ||wordsArr[i] === 'played' || wordsArr[i] === 'play' || wordsArr[i] === 'plays') {
-          flashCommand('Playing Song');
-          bInProgress = true;
-          playSong();
+          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
+            flashCommand('Play', 'play.png');
+            bInProgress = true;
+            playSong();
+          }
         }
       }
     }
@@ -93,8 +130,9 @@ function startRec() {
   speech.start();
 }
 
-function flashCommand(sTitle) {
+function flashCommand(sTitle, src) {
   document.getElementsByClassName('ext-headline')[0].innerText = sTitle;
+  document.getElementById('icon-photo').src = src;
   var iBeginFade = 100;
   var fadeInt = setInterval(function() {
     iBeginFade = iBeginFade-10;
@@ -104,7 +142,8 @@ function flashCommand(sTitle) {
     else {
       clearInterval(fadeInt);
       document.getElementsByClassName('ext-headline')[0].style.opacity = 1;
-      document.getElementsByClassName('ext-headline')[0].innerText = 'Youtube Voice';
+      document.getElementsByClassName('ext-headline')[0].innerText = 'Spotify Voice';
+      document.getElementById('icon-photo').src = 'logo.png'
       bInProgress = false;
     }
   }, 100);
