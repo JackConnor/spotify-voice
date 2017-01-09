@@ -1,6 +1,8 @@
 var MAIN_URL = 'https://play.spotify.com/*';
 var bBlock = true;
 var bInProgress = false;
+var windowTO;
+
 function nextSong(){
   var runtimer = chrome.runtime
   chrome.tabs.query({url: MAIN_URL}, function(data) {
@@ -8,11 +10,12 @@ function nextSong(){
       code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#next');"+ "console.log(nxt); "+
       "nxt.click();"
     }, function() {
-      //
+      setTimeout(function(){
+        playSong();
+      }, 500);
     });
   });
 }
-
 
 function lastSong(){
   chrome.tabs.query({url: MAIN_URL}, function(data) {
@@ -29,7 +32,9 @@ function lastSong(){
       "}, 500)}"
       // "setTimeout(function(){nxt.click(); console.log('second')}, 400)"
     }, function() {
-      //
+      setTimeout(function(){
+        playSong();
+      }, 500);
     });
   });
 }
@@ -40,7 +45,9 @@ function restartSong(){
       code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#previous');"+ "console.log(nxt); "+
       "nxt.click();"
     }, function() {
-      //
+      setTimeout(function(){
+        playSong();
+      }, 500);
     });
   });
 }
@@ -48,10 +55,10 @@ function restartSong(){
 function pauseSong(){
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
-      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#play-pause');"+ "console.log(nxt); "+
-      "nxt.click();"
+      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#play-pause');"+ "if(nxt.classList.contains('playing')){nxt.click()}"
     }, function() {
-      //
+      stopWindowTO();
+      startWindowTO(300000);
     });
   });
 }
@@ -59,12 +66,22 @@ function pauseSong(){
 function playSong(){
   chrome.tabs.query({url: MAIN_URL}, function(data) {
     chrome.tabs.executeScript(data[0].id, {
-      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#play-pause');"+ "console.log(nxt); "+
-      "nxt.click();"
+      code: "var nxt = document.getElementById('app-player').contentDocument.querySelector('#play-pause');"+ "var isPlaying = nxt.classList.contains('playing'); if(!isPlaying){nxt.click();}"
     }, function() {
-      //
+      stopWindowTO();
+      startWindowTO(25000);
     });
   });
+}
+
+function startWindowTO(msDelay) {
+  windowTO = setTimeout(function() {
+    window.close();
+  }, msDelay);
+}
+
+function stopWindowTO() {
+  clearTimeout(windowTO);
 }
 
 function startRec() {
@@ -87,42 +104,29 @@ function startRec() {
     if (!bInProgress) {
       for (var i = 0; i < wordsArr.length; i++) {
         if (wordsArr[i] === 'next' || wordsArr[i] === 'necks' || wordsArr[i] === 'neck') {
-          flashCommand('Next', 'next.png');
           bInProgress = true;
           nextSong();
-          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
-            playSong();
-          }
+          flashCommand('Next', 'next.png');
         }
         else if (wordsArr[i] === 'last' || wordsArr[i] === 'lass' || wordsArr[i] === 'las' || wordsArr[i] === 'previous') {
-          flashCommand('Last', 'last.png');
           bInProgress = true;
           lastSong();
-          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
-            playSong();
-          }
+          flashCommand('Last', 'last.png');
         }
         else if (wordsArr[i] === 'restart' || wordsArr[i] === 'startover' || wordsArr[i] === 'redo' || wordsArr[i] === 'again') {
           flashCommand('Restart', 'last.png');
           bInProgress = true;
           restartSong();
-          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
-            playSong();
-          }
         }
         else if(wordsArr[i] === 'stop' ||wordsArr[i] === 'pause' || wordsArr[i] === 'paws') {
-          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Spotify Voice') {
-            document.getElementsByClassName('ext-headline')[0].innerText = 'Pause';
-            document.getElementById('icon-photo').src = 'pause.png';
-            pauseSong();
-          }
+          pauseSong();
+          document.getElementsByClassName('ext-headline')[0].innerText = 'Pause';
+          document.getElementById('icon-photo').src = 'pause.png';
         }
         else if(wordsArr[i] === 'go' || wordsArr[i] === 'goal' ||wordsArr[i] === 'played' || wordsArr[i] === 'play' || wordsArr[i] === 'plays') {
-          if (document.getElementsByClassName('ext-headline')[0].innerText === 'Pause') {
-            flashCommand('Play', 'play.png');
-            bInProgress = true;
-            playSong();
-          }
+          bInProgress = true;
+          playSong();
+          flashCommand('Play', 'play.png');
         }
       }
     }
@@ -151,3 +155,4 @@ function flashCommand(sTitle, src) {
 
 /////begin function
 startRec();
+startWindowTO(60000);
