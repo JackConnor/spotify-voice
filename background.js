@@ -12,6 +12,7 @@ function nextSong(){
     }, function() {
       setTimeout(function(){
         playSong();
+        _gaq.push(['_trackEvent', 'next-song', 'clicked']);
       }, 500);
     });
   });
@@ -34,6 +35,7 @@ function lastSong(){
     }, function() {
       setTimeout(function(){
         playSong();
+        _gaq.push(['_trackEvent', 'last-song', 'clicked']);
       }, 500);
     });
   });
@@ -47,6 +49,7 @@ function restartSong(){
     }, function() {
       setTimeout(function(){
         playSong();
+        _gaq.push(['_trackEvent', 'restart-song', 'clicked']);
       }, 500);
     });
   });
@@ -59,6 +62,7 @@ function pauseSong(){
     }, function() {
       stopWindowTO();
       startWindowTO(300000);
+      _gaq.push(['_trackEvent', 'pause-song', 'clicked']);
     });
   });
 }
@@ -127,6 +131,7 @@ function startRec() {
           bInProgress = true;
           playSong();
           flashCommand('Play', 'play.png');
+          _gaq.push(['_trackEvent', 'play-song', 'clicked']);
         }
       }
     }

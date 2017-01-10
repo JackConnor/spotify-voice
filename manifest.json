@@ -3,10 +3,12 @@
   "name": "Spotify Voice",
   "version": "1.1",
   "browser_action": {
-    "default_icon": "icon.png",
+    "default_icon": "temp-icon.png",
     "default_popup": "popup.html",
-    "default_title": "Youtube Voice"
+    "default_title": "Spotify Voice Control"
   },
+  "short_name": "Voice Control, for Spotify web player",
+  "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
   "permissions": [
     "http://*/*",
     "https://*/*",
