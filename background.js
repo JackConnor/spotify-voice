@@ -2,7 +2,6 @@ var MAIN_URL = 'https://play.spotify.com/*';
 var bBlock = true;
 var bInProgress = false;
 var windowTO;
-
 function nextSong(){
   var runtimer = chrome.runtime
   chrome.tabs.query({url: MAIN_URL}, function(data) {
@@ -95,7 +94,7 @@ function startRec() {
   // ////////if user is not authorized, this opens up a new tab which asks them to use their mic
   speech.onerror = function(err) {
     if (err.error === 'not-allowed') {
-      chrome.tabs.create({url: "auth.html"})
+      chrome.tabs.create({url: "auth.html"});
     }
   }
 
